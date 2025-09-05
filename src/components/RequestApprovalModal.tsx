@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
-import type { RentalRequest } from '../types';
+import type { RentalRequest } from '../types'; // FIX: Removed unused 'Vehicle' import
 import { Modal, Button, Select, Input } from './ui';
 
 interface RequestApprovalModalProps {
@@ -9,7 +9,7 @@ interface RequestApprovalModalProps {
 }
 
 const RequestApprovalModal: React.FC<RequestApprovalModalProps> = ({ request, onClose }) => {
-    const { vehicles, approveRentalRequest, getLicenseImageUrl, addToast } = useData();
+    const { vehicles, approveRentalRequest, addToast } = useData();
     const [selectedVehicleId, setSelectedVehicleId] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -17,16 +17,11 @@ const RequestApprovalModal: React.FC<RequestApprovalModalProps> = ({ request, on
     const [imageUrl, setImageUrl] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchImage = async () => {
-            if (request.drivers_license_image_base64) {
-                 // The base64 string is directly in the request object for new pending requests.
-                 setImageUrl(request.drivers_license_image_base64);
-            }
-        };
-        fetchImage();
+        if (request.drivers_license_image_base64) {
+             setImageUrl(request.drivers_license_image_base64);
+        }
     }, [request]);
 
-    // Simple pricing logic for approval
     useEffect(() => {
         const vehicle = vehicles.find(v => v.id === selectedVehicleId);
         if (vehicle && startDate && endDate) {
@@ -52,7 +47,6 @@ const RequestApprovalModal: React.FC<RequestApprovalModalProps> = ({ request, on
     };
 
     const handleReject = () => {
-        // In a real app, you would update the status to 'rejected'
         console.log("Request rejected:", request.id);
         addToast("Žádost byla zamítnuta.", "info");
         onClose();
@@ -104,5 +98,4 @@ const RequestApprovalModal: React.FC<RequestApprovalModalProps> = ({ request, on
         </Modal>
     );
 };
-
 export default RequestApprovalModal;
